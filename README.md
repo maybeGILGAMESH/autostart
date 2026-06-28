@@ -346,10 +346,10 @@ conda env update -f environment.yml --prune
 conda run -n test python -m py_compile test_env_bot.py capture_tuna_access.py send_status_email.py send_boot_report.py telegram_get_chat_id.py
 ```
 
-`run_test_bot.sh` по умолчанию ищет `conda` через `PATH`. Если conda лежит в нестандартном месте, задайте:
+`run_test_bot.sh` берет путь к conda из `AUTOSTART_CONDA_BIN` в `autostart_config.env`. Если нужно разово переопределить путь, задайте:
 
 ```bash
-CONDA_BIN=/path/to/conda /home/user/autostart/run_test_bot.sh
+CONDA_BIN=/path/to/conda ./run_test_bot.sh
 ```
 
 После клона создайте локальные конфиги из примеров и заполните секреты только в локальных `*.env`:
@@ -378,15 +378,15 @@ AUTOSTART_CONDA_BIN=/home/user/conda/bin/conda
 AUTOSTART_HIDDIFY_APPIMAGE=/home/user/Downloads/Hiddify-Linux-x64.AppImage
 ```
 
-На другой машине обычно достаточно поменять `AUTOSTART_USER`, `AUTOSTART_GROUP`, `AUTOSTART_HOME`, `AUTOSTART_DIR`, `AUTOSTART_UID` и пути к conda/Hiddify. После этого примените конфиг ко всем зависимым файлам:
+На другой машине обычно достаточно поменять `AUTOSTART_USER`, `AUTOSTART_GROUP`, `AUTOSTART_HOME`, `AUTOSTART_DIR`, `AUTOSTART_UID` и пути к conda/Hiddify. После этого примените конфиг ко всем зависимым файлам из корня проекта:
 
 ```bash
-bash /home/user/autostart/render_autostart_config.sh
+bash render_autostart_config.sh
 ```
 
-## Подготовка к Git
+## Обновление Git
 
-Перед публикацией не коммитьте реальные `*.env`, `logs/`, `generated/` и `__pycache__/`; они закрыты через `.gitignore`.
+Не коммитьте реальные `*.env`, `logs/`, `generated/` и `__pycache__/`; они закрыты через `.gitignore`.
 
 Проверить, что секреты и runtime-файлы игнорируются:
 
@@ -394,26 +394,23 @@ bash /home/user/autostart/render_autostart_config.sh
 git check-ignore -v mail_config.env telegram_config.env logs generated __pycache__
 ```
 
-Если текущая `.git` папка повреждена или пуста и `git status` пишет `fatal: not a git repository`, удалите пустой каталог и создайте репозиторий заново:
+Закоммитить и отправить обновленный README в уже существующий репозиторий:
 
 ```bash
-rmdir .git
-git init
-git branch -M main
-git add .
 git status --short
-git commit -m "Prepare bot environment and machine-targeted Telegram commands"
-git remote add origin https://github.com/<OWNER>/<REPO>.git
-git push -u origin main
+git add README.md
+git status --short
+git commit -m "Update deployment documentation"
+git push
 ```
 
-При `git push` введите GitHub login как username, а personal access token как password.
+Если GitHub запросит логин, введите GitHub username, а вместо password используйте personal access token.
 
 Одноразовый push без сохранения token в remote URL:
 
 ```bash
 read -rsp 'GitHub token: ' GITHUB_TOKEN; echo
-git push -u "https://x-access-token:${GITHUB_TOKEN}@github.com/<OWNER>/<REPO>.git" main
+git push "https://x-access-token:${GITHUB_TOKEN}@github.com/<OWNER>/<REPO>.git" HEAD:main
 unset GITHUB_TOKEN
 ```
 
@@ -440,6 +437,7 @@ cd /home/user/autostart
 Создать локальные конфиги:
 
 ```bash
+cp autostart_config.env.example autostart_config.env
 cp mail_config.env.example mail_config.env
 cp telegram_config.env.example telegram_config.env
 cp test_bot.env.example test_bot.env
@@ -462,7 +460,7 @@ cp health_config.env.example health_config.env
 Применить единый конфиг к systemd/desktop/env-файлам:
 
 ```bash
-bash /home/user/autostart/render_autostart_config.sh
+bash render_autostart_config.sh
 ```
 
 Создать/обновить Python-окружение:
@@ -475,19 +473,19 @@ conda run -n test python -m py_compile test_env_bot.py capture_tuna_access.py se
 Установить автозапуск без systemd:
 
 ```bash
-/home/user/autostart/install_autostart.sh
+./install_autostart.sh
 ```
 
 Установить полный автономный режим с systemd:
 
 ```bash
-/home/user/autostart/install_full_autonomy.sh
+./install_full_autonomy.sh
 ```
 
 Проверить состояние:
 
 ```bash
-/home/user/autostart/status_all.sh
+./status_all.sh
 systemctl is-active autostart-vnc-keepalive.service autostart-fallback.service autostart-test-bot.service autostart-tuna-backup.service autostart-healthcheck.timer autostart-periodic-status.timer
 ```
 
