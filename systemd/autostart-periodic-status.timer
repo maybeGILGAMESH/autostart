@@ -1,0 +1,11 @@
+[Unit]
+Description=Send autostart status every 2 hours
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=2h
+Persistent=true
+Unit=autostart-periodic-status.service
+
+[Install]
+WantedBy=timers.target

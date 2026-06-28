@@ -1,0 +1,12 @@
+*.env
+!*.env.example
+!autostart_config.env
+logs/
+generated/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+.idea/
+.vscode/

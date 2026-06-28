@@ -1,0 +1,17 @@
+[Unit]
+Description=Autostart VNC keepalive
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{AUTOSTART_USER}}
+Group={{AUTOSTART_GROUP}}
+WorkingDirectory={{AUTOSTART_DIR}}
+Environment=HOME={{AUTOSTART_HOME}}
+ExecStart={{AUTOSTART_DIR}}/vnc_keepalive.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

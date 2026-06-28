@@ -1,0 +1,19 @@
+[Unit]
+Description=Autostart fallback orchestrator
+After=network-online.target autostart-vnc-keepalive.service
+Wants=network-online.target autostart-vnc-keepalive.service
+
+[Service]
+Type=oneshot
+User={{AUTOSTART_USER}}
+Group={{AUTOSTART_GROUP}}
+WorkingDirectory={{AUTOSTART_DIR}}
+Environment=HOME={{AUTOSTART_HOME}}
+Environment=XAUTHORITY={{AUTOSTART_XAUTHORITY}}
+Environment=XDG_RUNTIME_DIR={{AUTOSTART_XDG_RUNTIME_DIR}}
+Environment=DBUS_SESSION_BUS_ADDRESS={{AUTOSTART_DBUS_SESSION_BUS_ADDRESS}}
+ExecStart={{AUTOSTART_DIR}}/fallback_orchestrator.sh
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target

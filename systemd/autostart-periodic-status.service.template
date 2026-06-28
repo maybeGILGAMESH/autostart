@@ -1,0 +1,15 @@
+[Unit]
+Description=Periodic full status report for autostart stack
+After=network-online.target autostart-vnc-keepalive.service autostart-test-bot.service autostart-tuna-backup.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User={{AUTOSTART_USER}}
+Group={{AUTOSTART_GROUP}}
+WorkingDirectory={{AUTOSTART_DIR}}
+Environment=HOME={{AUTOSTART_HOME}}
+ExecStart={{AUTOSTART_DIR}}/periodic_status.sh
+
+[Install]
+WantedBy=multi-user.target

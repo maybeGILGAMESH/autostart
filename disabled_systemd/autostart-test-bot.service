@@ -1,0 +1,17 @@
+[Unit]
+Description=Autostart Python bot in conda env test
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=user
+Group=user
+WorkingDirectory=/home/user/autostart
+Environment=HOME=/home/user
+ExecStart=/home/user/autostart/run_test_bot.sh
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

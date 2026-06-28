@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Hiddify Client Autostart Disabled
+Comment=VPN autostart disabled
+Exec=/bin/true
+Terminal=false
+X-GNOME-Autostart-enabled=false
+Hidden=true
+StartupNotify=false

@@ -1,0 +1,19 @@
+что изменено
+
+- hiddify больше не добавляется в ~/.config/autostart
+- старые ярлыки автозапуска hiddify и outline удаляются при запуске install_autostart.sh
+- fallback_orchestrator.sh больше не пытается поднимать hiddify
+- health_check.sh больше не считает hiddify обязательным компонентом и не будет из-за него запускать восстановление или перезагрузку
+- hiddify-client.desktop оставлен только как отключенная заглушка, чтобы случайная установка не запускала vpn
+
+что останется в автозапуске
+
+- tuna ssh
+- vnc keepalive
+- test bot
+- healthcheck и периодический status report
+
+чтобы применить на машине
+
+cd /home/user/autostart
+./install_autostart.sh

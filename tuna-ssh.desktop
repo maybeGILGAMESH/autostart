@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Tuna SSH Autostart
+Comment=Open a terminal with tuna ssh and send a boot report by email
+Exec=/home/user/autostart/autostart_tuna.sh
+Terminal=false
+X-GNOME-Autostart-enabled=true

@@ -1,0 +1,11 @@
+[Unit]
+Description=Run autostart health check every 24 hours
+
+[Timer]
+OnBootSec=24h
+OnUnitActiveSec=24h
+Persistent=true
+Unit=autostart-healthcheck.service
+
+[Install]
+WantedBy=timers.target
