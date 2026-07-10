@@ -22,6 +22,7 @@ chmod +x \
   "$BASE_DIR/log_helpers.sh" \
   "$BASE_DIR/autostart_config.sh" \
   "$BASE_DIR/render_autostart_config.sh" \
+  "$BASE_DIR/render_secrets_env.sh" \
   "$BASE_DIR/install_autostart.sh" \
   "$BASE_DIR/install_systemd_fallback.sh" \
   "$BASE_DIR/tuna_interactive.sh" \

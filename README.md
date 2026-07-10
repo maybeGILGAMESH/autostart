@@ -356,6 +356,7 @@ CONDA_BIN=/path/to/conda ./run_test_bot.sh
 
 ```bash
 cp autostart_config.env.example autostart_config.env
+cp secrets.env.example secrets.env
 cp mail_config.env.example mail_config.env
 cp telegram_config.env.example telegram_config.env
 cp test_bot.env.example test_bot.env
@@ -384,14 +385,64 @@ AUTOSTART_HIDDIFY_APPIMAGE=/home/user/Downloads/Hiddify-Linux-x64.AppImage
 bash render_autostart_config.sh
 ```
 
+Главный файл секретов: `secrets.env`.
+
+В нем задаются Telegram token/chat id, SMTP-доступ и tuna-пароль/секретные параметры. Файл `secrets.env` игнорируется Git и не должен попадать в commit. После заполнения примените его к runtime-конфигам:
+
+```bash
+bash render_secrets_env.sh
+```
+
+Это обновит:
+
+- `telegram_config.env`
+- `mail_config.env`
+- `tuna_config.env`
+
+## Docker helper
+
+Docker-образ используется как host-installer/helper: он валидирует проект и рендерит конфиги в примонтированной папке. Он не запускает host systemd, VNC, GNOME terminal, Hiddify GUI или постоянный tuna-туннель внутри контейнера.
+
+Сборка:
+
+```bash
+docker build -t autostart-stack .
+```
+
+Проверка проекта:
+
+```bash
+docker run --rm -v "$PWD:/workspace" autostart-stack validate
+```
+
+Рендер конфигов из `autostart_config.env` и `secrets.env`:
+
+```bash
+docker run --rm --env-file ./secrets.env -v "$PWD:/workspace" autostart-stack render
+```
+
+Подготовка проекта и вывод следующих host-команд:
+
+```bash
+docker run --rm --env-file ./secrets.env -v "$PWD:/workspace" autostart-stack export
+```
+
+После Docker render установку выполняйте уже на хосте:
+
+```bash
+conda env update -f environment.yml --prune
+./install_full_autonomy.sh
+./status_all.sh
+```
+
 ## Обновление Git
 
-Не коммитьте реальные `*.env`, `logs/`, `generated/` и `__pycache__/`; они закрыты через `.gitignore`.
+Не коммитьте реальные `*.env`, `secrets.env`, `logs/`, `generated/` и `__pycache__/`; они закрыты через `.gitignore`.
 
 Проверить, что секреты и runtime-файлы игнорируются:
 
 ```bash
-git check-ignore -v mail_config.env telegram_config.env logs generated __pycache__
+git check-ignore -v secrets.env mail_config.env telegram_config.env logs generated __pycache__
 ```
 
 Закоммитить и отправить обновленный README в уже существующий репозиторий:
@@ -438,6 +489,7 @@ cd /home/user/autostart
 
 ```bash
 cp autostart_config.env.example autostart_config.env
+cp secrets.env.example secrets.env
 cp mail_config.env.example mail_config.env
 cp telegram_config.env.example telegram_config.env
 cp test_bot.env.example test_bot.env
@@ -451,8 +503,7 @@ cp health_config.env.example health_config.env
 Заполнить минимум:
 
 - `autostart_config.env`: пользователь, группа, home, путь проекта, uid, conda, Hiddify
-- `telegram_config.env`: `TELEGRAM_ENABLED=1`, `TG_BOT_TOKEN`, `TG_CHAT_ID`
-- `mail_config.env`: SMTP-настройки, если нужны письма
+- `secrets.env`: `TG_BOT_TOKEN`, `TG_CHAT_ID`, SMTP-настройки, `TUNA_ACCESS_PASSWORD` при необходимости
 - `test_bot.env`: `BOT_MACHINE_NAME`, `BOT_MACHINE_ALIASES`, `BOT_KNOWN_MACHINES`
 - `hiddify_config.env`: путь к `HIDDIFY_APPIMAGE`
 - `tuna_config.env`: режим `TUNA_TUNNEL_MODE` и параметры tuna
@@ -461,6 +512,7 @@ cp health_config.env.example health_config.env
 
 ```bash
 bash render_autostart_config.sh
+bash render_secrets_env.sh
 ```
 
 Создать/обновить Python-окружение:
